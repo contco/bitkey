@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use strict';
 
 var _ = require('lodash');
@@ -28,22 +29,24 @@ var BufferUtil = require('./util/buffer');
  * @constructor
  * @param {Object|string|Buffer} arg
  */
-function HDPublicKey(arg) {
+export const HDPublicKey:any = (arg:any) =>{
+  const self: any = this;
+
   /* jshint maxcomplexity: 12 */
   /* jshint maxstatements: 20 */
   if (arg instanceof HDPublicKey) {
     return arg;
   }
-  if (!(this instanceof HDPublicKey)) {
+  if (!(self instanceof HDPublicKey)) {
     return new HDPublicKey(arg);
   }
   if (arg) {
     if (_.isString(arg) || BufferUtil.isBuffer(arg)) {
       var error = HDPublicKey.getSerializedError(arg);
       if (!error) {
-        return this._buildFromSerialized(arg);
+        return self._buildFromSerialized(arg);
       } else if (BufferUtil.isBuffer(arg) && !HDPublicKey.getSerializedError(arg.toString())) {
-        return this._buildFromSerialized(arg.toString());
+        return self._buildFromSerialized(arg.toString());
       } else {
         if (error instanceof hdErrors.ArgumentIsPrivateExtended) {
           return new HDPrivateKey(arg).hdPublicKey;
@@ -53,9 +56,9 @@ function HDPublicKey(arg) {
     } else {
       if (_.isObject(arg)) {
         if (arg instanceof HDPrivateKey) {
-          return this._buildFromPrivate(arg);
+          return self._buildFromPrivate(arg);
         } else {
-          return this._buildFromObject(arg);
+          return self._buildFromObject(arg);
         }
       } else {
         throw new hdErrors.UnrecognizedArgument(arg);
@@ -72,7 +75,7 @@ function HDPublicKey(arg) {
  * @param {string|number} arg
  * @return {boolean}
  */
-HDPublicKey.isValidPath = function(arg) {
+HDPublicKey.isValidPath = function(arg: stringNumberType) {
   if (_.isString(arg)) {
     var indexes = HDPrivateKey._getDerivationIndexes(arg);
     return indexes !== null && _.every(indexes, HDPublicKey.isValidPath);
@@ -110,7 +113,7 @@ HDPublicKey.isValidPath = function(arg) {
  *
  * @param {string|number} arg
  */
-HDPublicKey.prototype.derive = function(arg, hardened) {
+HDPublicKey.prototype.derive = function(arg:stringNumberType, hardened:boolean) {
   return this.deriveChild(arg, hardened);
 };
 
@@ -139,7 +142,7 @@ HDPublicKey.prototype.derive = function(arg, hardened) {
  *
  * @param {string|number} arg
  */
-HDPublicKey.prototype.deriveChild = function(arg, hardened) {
+HDPublicKey.prototype.deriveChild = function(arg:stringNumberType, hardened:boolean) {
   if (_.isNumber(arg)) {
     return this._deriveWithNumber(arg, hardened);
   } else if (_.isString(arg)) {
@@ -149,7 +152,7 @@ HDPublicKey.prototype.deriveChild = function(arg, hardened) {
   }
 };
 
-HDPublicKey.prototype._deriveWithNumber = function(index, hardened) {
+HDPublicKey.prototype._deriveWithNumber = function(index:number, hardened:boolean) {
   if (index >= HDPublicKey.Hardened || hardened) {
     throw new hdErrors.InvalidIndexCantDeriveHardened();
   }
@@ -182,7 +185,7 @@ HDPublicKey.prototype._deriveWithNumber = function(index, hardened) {
   return derived;
 };
 
-HDPublicKey.prototype._deriveFromString = function(path) {
+HDPublicKey.prototype._deriveFromString = function(path:string) {
   /* jshint maxcomplexity: 8 */
   if (_.includes(path, "'")) {
     throw new hdErrors.InvalidIndexCantDeriveHardened();
@@ -191,7 +194,7 @@ HDPublicKey.prototype._deriveFromString = function(path) {
   }
 
   var indexes = HDPrivateKey._getDerivationIndexes(path);
-  var derived = indexes.reduce(function(prev, index) {
+  var derived = indexes.reduce(function(prev:any, index:number) {
     return prev._deriveWithNumber(index);
   }, this);
 
@@ -207,7 +210,7 @@ HDPublicKey.prototype._deriveFromString = function(path) {
  *     network provided matches the network serialized.
  * @return {boolean}
  */
-HDPublicKey.isValidSerialized = function(data, network) {
+HDPublicKey.isValidSerialized = function(data:dataType, network:networkType) {
   return _.isNull(HDPublicKey.getSerializedError(data, network));
 };
 
@@ -220,7 +223,7 @@ HDPublicKey.isValidSerialized = function(data, network) {
  *     network provided matches the network serialized.
  * @return {errors|null}
  */
-HDPublicKey.getSerializedError = function(data, network) {
+HDPublicKey.getSerializedError = function(data:dataType, network:networkType) {
   /* jshint maxcomplexity: 10 */
   /* jshint maxstatements: 20 */
   if (!(_.isString(data) || BufferUtil.isBuffer(data))) {
@@ -250,7 +253,7 @@ HDPublicKey.getSerializedError = function(data, network) {
   return null;
 };
 
-HDPublicKey._validateNetwork = function(data, networkArg) {
+HDPublicKey._validateNetwork = function(data:dataType, networkArg:networkType) {
   var network = Network.get(networkArg);
   if (!network) {
     return new errors.InvalidNetworkArgument(networkArg);
@@ -262,7 +265,7 @@ HDPublicKey._validateNetwork = function(data, networkArg) {
   return null;
 };
 
-HDPublicKey.prototype._buildFromPrivate = function (arg) {
+HDPublicKey.prototype._buildFromPrivate = function (arg:any) {
   var args = _.clone(arg._buffers);
   var point = Point.getG().mul(BN.fromBuffer(args.privateKey));
   args.publicKey = Point.pointToCompressed(point);
@@ -273,7 +276,7 @@ HDPublicKey.prototype._buildFromPrivate = function (arg) {
   return this._buildFromBuffers(args);
 };
 
-HDPublicKey.prototype._buildFromObject = function(arg) {
+HDPublicKey.prototype._buildFromObject = function(arg:any) {
   /* jshint maxcomplexity: 10 */
   // TODO: Type validation
   var buffers = {
@@ -289,7 +292,7 @@ HDPublicKey.prototype._buildFromObject = function(arg) {
   return this._buildFromBuffers(buffers);
 };
 
-HDPublicKey.prototype._buildFromSerialized = function(arg) {
+HDPublicKey.prototype._buildFromSerialized = function(arg:any) {
   var decoded = Base58Check.decode(arg);
   var buffers = {
     version: decoded.slice(HDPublicKey.VersionStart, HDPublicKey.VersionEnd),
@@ -321,7 +324,7 @@ HDPublicKey.prototype._buildFromSerialized = function(arg) {
  *      representation
  * @return {HDPublicKey} this
  */
-HDPublicKey.prototype._buildFromBuffers = function(arg) {
+HDPublicKey.prototype._buildFromBuffers = function(arg:any) {
   /* jshint maxcomplexity: 8 */
   /* jshint maxstatements: 20 */
 
@@ -365,8 +368,8 @@ HDPublicKey.prototype._buildFromBuffers = function(arg) {
   return this;
 };
 
-HDPublicKey._validateBufferArguments = function(arg) {
-  var checkBuffer = function(name, size) {
+HDPublicKey._validateBufferArguments = function(arg:any) {
+  var checkBuffer = function(name:string, size:number) {
     var buff = arg[name];
     assert(BufferUtil.isBuffer(buff), name + ' argument is not a buffer, it\'s ' + typeof buff);
     assert(
@@ -385,12 +388,12 @@ HDPublicKey._validateBufferArguments = function(arg) {
   }
 };
 
-HDPublicKey.fromString = function(arg) {
+HDPublicKey.fromString = function(arg:any) {
   $.checkArgument(_.isString(arg), 'No valid string was provided');
   return new HDPublicKey(arg);
 };
 
-HDPublicKey.fromObject = function(arg) {
+HDPublicKey.fromObject = function(arg:any) {
   $.checkArgument(_.isObject(arg), 'No valid argument was provided');
   return new HDPublicKey(arg);
 };
@@ -448,7 +451,7 @@ HDPublicKey.prototype.toObject = HDPublicKey.prototype.toJSON = function toObjec
  * @param {Buffer} arg
  * @return {HDPublicKey}
  */
-HDPublicKey.fromBuffer = function(arg) {
+HDPublicKey.fromBuffer = function(arg:Buffer) {
   return new HDPublicKey(arg);
 };
 
@@ -492,5 +495,3 @@ HDPublicKey.ChecksumEnd            = HDPublicKey.ChecksumStart + HDPublicKey.Che
 
 assert(HDPublicKey.PublicKeyEnd === HDPublicKey.DataSize);
 assert(HDPublicKey.ChecksumEnd === HDPublicKey.SerializedByteSize);
-
-module.exports = HDPublicKey;
