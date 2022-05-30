@@ -1,6 +1,6 @@
 {
   "name": "bitkey",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "bitkey is the bitcoin key management package",
   "main": "./lib/src/index.js",
   "files": [
