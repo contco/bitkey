@@ -1,6 +1,6 @@
 {
   "name": "bitkey",
-  "version": "0.0.0-development",
+  "version": "0.0.1",
   "description": "bitkey is the bitcoin key management package",
   "main": "./lib/src/index.js",
   "files": [
@@ -59,10 +59,8 @@
     "ts-node": "^10.2.1",
     "typescript": "^4.2.4"
   },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/@ryansonshine/cz-conventional-changelog"
-    }
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   },
   "lint-staged": {
     "*.ts": "eslint --cache --cache-location .eslintcache --fix"
