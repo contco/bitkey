@@ -1,6 +1,6 @@
 {
   "name": "@contco/bitkey",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "bitkey is the bitcoin key management package",
   "main": "./lib/src/index.js",
   "files": [
@@ -16,7 +16,8 @@
     "semantic-release": "semantic-release",
     "test:watch": "jest --watch",
     "test": "jest --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:build": "run-s build"
   },
   "repository": {
     "type": "git",
