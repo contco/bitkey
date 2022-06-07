@@ -1,10 +1,12 @@
+/* eslint-disable */
+
 'use strict';
 var _ = require('lodash');
 
 var BufferUtil = require('./util/buffer');
 var JSUtil = require('./util/js');
-var networks = [];
-var networkMaps = {};
+var networks:networkType[] = [];
+var networkMaps:any = {};
 
 /**
  * A network is merely a map containing values that correspond to version
@@ -12,7 +14,7 @@ var networkMaps = {};
  * (a.k.a. "mainnet") and "testnet".
  * @constructor
  */
-function Network() {}
+export const Network:any = () => {}
 
 Network.prototype.toString = function toString() {
   return this.name;
@@ -26,7 +28,7 @@ Network.prototype.toString = function toString() {
  * @param {string|Array} keys - if set, only check if the magic number associated with this name matches
  * @return Network
  */
-function get(arg, keys) {
+function get(arg?:networkType, keys?:keyType) {
   if (~networks.indexOf(arg)) {
     return arg;
   }
@@ -34,9 +36,7 @@ function get(arg, keys) {
     if (!_.isArray(keys)) {
       keys = [keys];
     }
-    var containsArg = function(key) {
-      return networks[index][key] === arg;
-    };
+    var containsArg = (key: keyType, index:number) => networks[index][key] === arg;
     for (var index in networks) {
       if (_.some(keys, containsArg)) {
         return networks[index];
@@ -69,9 +69,9 @@ function get(arg, keys) {
  * @param {Array}  data.dnsSeeds - An array of dns seeds
  * @return Network
  */
-function addNetwork(data) {
+function addNetwork(data:any) {
 
-  var network = new Network();
+  var network:any = new Network();
 
   JSUtil.defineImmutable(network, {
     name: data.name,
@@ -101,7 +101,7 @@ function addNetwork(data) {
       dnsSeeds: data.dnsSeeds
     });
   }
-  _.each(network, function(value) {
+  _.each(network, function(value:any) {
     if (!_.isUndefined(value) && !_.isObject(value)) {
       if(!networkMaps[value]) {
         networkMaps[value] = [];
@@ -122,7 +122,7 @@ function addNetwork(data) {
  * Will remove a custom network
  * @param {Network} network
  */
-function removeNetwork(network) {
+function removeNetwork(network:networkType) {
   for (var i = 0; i < networks.length; i++) {
     if (networks[i] === network) {
       networks.splice(i, 1);
